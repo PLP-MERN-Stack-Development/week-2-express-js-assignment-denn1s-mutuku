@@ -42,12 +42,80 @@ You will:
 The API will have the following endpoints:
 
 - `GET /api/products`: Get all products
+
+app.get('/api/products', (req, res) => {
+  res.json(products);
+});
+
+
 - `GET /api/products/:id`: Get a specific product
+
+app.get ('/api/products/:id', (req, res) => {
+  const productId = req.params.id;
+  const product = products.find(p => p.id === productId);
+  
+  if (product) {
+    res.json(product);
+  } else {
+    res.status(404).json({ message: 'Product not found' });
+  }
+});
+
+
 - `POST /api/products`: Create a new product
+
+app.post('/api/products', (req, res) => {
+  const newProduct = {
+    id: uuidv4(), // Generate a unique ID for the new product
+    ...req.body // Spread the request body into the new product object
+  };
+
+  products.push(newProduct); // Add the new product to the in-memory database
+  res.status(201).json(newProduct); // Respond with the created product
+});
+
+
+
 - `PUT /api/products/:id`: Update a product
+
+app.put('/api/products/:id', (req, res) => {
+  const productId = req.params.id;
+  const productIndex = products.findIndex(p => p.id === productId);
+
+  if (productIndex !== -1) {
+    const updatedProduct = {
+      ...products[productIndex],
+      ...req.body // Update the product with the request body
+    };
+    
+    products[productIndex] = updatedProduct; // Update the product in the in-memory database
+    res.json(updatedProduct); // Respond with the updated product
+  } else {
+    res.status(404).json({ message: 'Product not found' });
+  }
+});
+
+
+
 - `DELETE /api/products/:id`: Delete a product
 
+app.delete('/api/products/:id', (req, res) => {
+  const productId = req.params.id;
+  const productIndex = products.findIndex(p => p.id === productId);
+
+  if (productIndex !== -1) {
+    products.splice(productIndex, 1); // Remove the product from the in-memory database
+    res.status(204).send(); // Respond with no content
+  } else {
+    res.status(404).json({ message: 'Product not found' });
+  }
+});
+
+
+
 ## Submission
+
+
 
 Your work will be automatically submitted when you push to your GitHub Classroom repository. Make sure to:
 
